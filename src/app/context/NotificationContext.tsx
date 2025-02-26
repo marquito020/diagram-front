@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Toast } from '../components/Toast';
-
-type NotificationType = 'success' | 'error' | 'info' | 'warning';
+import { NotificationType, NOTIFICATION_DURATION } from '../constants/notifications';
 
 interface NotificationContextType {
   showNotification: (message: string, type: NotificationType) => void;
@@ -13,7 +12,7 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [showToast, setShowToast] = useState(false);
   const [message, setMessage] = useState('');
-  const [type, setType] = useState<NotificationType>('success');
+  const [type, setType] = useState<NotificationType>(NotificationType.SUCCESS);
 
   const showNotification = (message: string, type: NotificationType) => {
     setMessage(message);
@@ -31,9 +30,9 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       {showToast && (
         <Toast
           message={message}
-          type={type as 'success' | 'error' | 'info' | undefined}
+          type={type}
           onClose={hideNotification}
-          duration={3000}
+          duration={NOTIFICATION_DURATION}
         />
       )}
     </NotificationContext.Provider>

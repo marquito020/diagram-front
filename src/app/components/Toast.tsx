@@ -1,28 +1,30 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCheckCircle, FaExclamationCircle, FaInfoCircle } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
+import { NotificationType, NOTIFICATION_DURATION, NotificationConfig } from '../constants/notifications';
 
 interface ToastProps {
     message: string;
-    type?: 'success' | 'error' | 'info';
+    type?: NotificationType;
     duration?: number;
     onClose: () => void;
 }
 
-const toastIcons = {
-    success: <FaCheckCircle className="w-5 h-5 text-green-500" />,
-    error: <FaExclamationCircle className="w-5 h-5 text-red-500" />,
-    info: <FaInfoCircle className="w-5 h-5 text-blue-500" />
+const toastIcons: Record<NotificationType, React.ReactNode> = {
+    [NotificationType.SUCCESS]: NotificationConfig[NotificationType.SUCCESS].icon,
+    [NotificationType.ERROR]: NotificationConfig[NotificationType.ERROR].icon,
+    [NotificationType.INFO]: NotificationConfig[NotificationType.INFO].icon,
+    [NotificationType.WARNING]: NotificationConfig[NotificationType.WARNING].icon
 };
 
-const toastStyles = {
-    success: 'bg-green-50 border-green-200 text-green-800',
-    error: 'bg-red-50 border-red-200 text-red-800',
-    info: 'bg-blue-50 border-blue-200 text-blue-800'
+const toastStyles: Record<NotificationType, string> = {
+    [NotificationType.SUCCESS]: NotificationConfig[NotificationType.SUCCESS].className,
+    [NotificationType.ERROR]: NotificationConfig[NotificationType.ERROR].className,
+    [NotificationType.INFO]: NotificationConfig[NotificationType.INFO].className,
+    [NotificationType.WARNING]: NotificationConfig[NotificationType.WARNING].className
 };
 
-export const Toast = ({ message, type = 'info', duration = 3000, onClose }: ToastProps) => {
+export const Toast = ({ message, type = NotificationType.INFO, duration = NOTIFICATION_DURATION, onClose }: ToastProps) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             onClose();

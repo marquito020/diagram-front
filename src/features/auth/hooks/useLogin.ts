@@ -6,7 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "../../../app/constants/routes";
 import { useNotification } from "../../../app/context/NotificationContext";
 import { User } from "../../../core/auth/entities/User";
-import { NotificationTypes } from "../../../app/constants/notifications";
+import {
+  NotificationType,
+  NotificationStorageKeys,
+  NotificationMessages
+} from "../../../app/constants/notifications";
 
 interface LoginState {
   loading: boolean;
@@ -36,16 +40,16 @@ export const useAuth = () => {
       }));
 
       // Almacenamos el nombre de usuario en sessionStorage para recuperarlo después de la navegación
-      sessionStorage.setItem(NotificationTypes.WELCOME, userData.firstName);
+      sessionStorage.setItem(NotificationStorageKeys.WELCOME, userData.firstName);
 
       // Navegamos a la página principal
       navigate(PrivateRoutes.HOME);
 
       return userData;
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Error al iniciar sesión";
+      const message = error instanceof Error ? error.message : NotificationMessages.GENERIC_ERROR;
       setState(prev => ({ ...prev, error: message }));
-      showNotification(message, "error");
+      showNotification(message, NotificationType.ERROR);
       throw error;
     } finally {
       setState(prev => ({ ...prev, loading: false }));

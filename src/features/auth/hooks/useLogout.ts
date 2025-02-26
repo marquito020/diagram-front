@@ -2,8 +2,9 @@ import { useAppDispatch } from "../../../app/store";
 import { logoutUserAction } from "../../../app/store/actions/userActions";
 import { useNavigate } from "react-router-dom";
 import { PublicRoutes } from "../../../app/constants/routes";
-import { NotificationStorageKeys } from "../../../app/constants/notifications";
+import { NotificationLocalStorageKeys } from "../../../app/constants/notifications";
 import { useErrorHandler } from "../../../app/hooks/useErrorHandler";
+import { LocalStorageService, StorageKeys } from "../../../infrastructure/storage/localStorage";
 
 export const useLogout = () => {
     const dispatch = useAppDispatch();
@@ -13,13 +14,13 @@ export const useLogout = () => {
     const logout = () => {
         try {
             // Limpiamos el token si existe
-            localStorage.removeItem('token');
+            LocalStorageService.removeItem(StorageKeys.TOKEN);
 
             // Dispatch de la acción de logout
             dispatch(logoutUserAction());
 
-            // Guardamos el estado de logout para mostrar el mensaje
-            sessionStorage.setItem(NotificationStorageKeys.LOGOUT, 'true');
+            // También lo guardamos en localStorage
+            LocalStorageService.setItem(NotificationLocalStorageKeys.LOGOUT, 'true');
 
             // Navegamos al login
             navigate(PublicRoutes.LOGIN);

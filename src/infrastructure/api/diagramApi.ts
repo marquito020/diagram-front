@@ -1,56 +1,88 @@
-// infrastructure/api/diagramApi.ts
-import { DiagramRepository } from "../../core/diagrams/ports/DiagramRepository";
-import { Diagram } from "../../core/diagrams/entities/Diagram";
-import { axiosClient } from "./axiosClient";
-import { handleAxiosError } from "./handleAxiosError";
+import axiosClient from './axiosClient';
+import { Diagram } from '../../core/diagrams/entities/Diagram';
+import { DiagramData } from '../../features/diagrams/types/diagramTypes';
 
-const DIAGRAMS_ENDPOINT = "/diagrams";
-
-export class DiagramApi implements DiagramRepository {
-    async createDiagram(name: string, anfitrionId: string): Promise<Diagram> {
-        try {
-            const response = await axiosClient.post(DIAGRAMS_ENDPOINT, {
-                name,
-                anfitrion: anfitrionId
-            });
-            return response.data;
-        } catch (error) {
-            throw handleAxiosError(error);
-        }
-    }
-
-    async getDiagramsByUserId(userId: string): Promise<Diagram[]> {
-        try {
-            const response = await axiosClient.get(`${DIAGRAMS_ENDPOINT}/user/${userId}`);
-            return response.data;
-        } catch (error) {
-            throw handleAxiosError(error);
-        }
-    }
-
-    async getDiagramById(id: string): Promise<Diagram> {
-        try {
-            const response = await axiosClient.get(`${DIAGRAMS_ENDPOINT}/${id}`);
-            return response.data;
-        } catch (error) {
-            throw handleAxiosError(error);
-        }
-    }
-
-    async updateDiagram(id: string, data: Partial<Diagram>): Promise<Diagram> {
-        try {
-            const response = await axiosClient.put(`${DIAGRAMS_ENDPOINT}/${id}`, data);
-            return response.data;
-        } catch (error) {
-            throw handleAxiosError(error);
-        }
-    }
-
-    async deleteDiagram(id: string, userId: string): Promise<void> {
-        try {
-            await axiosClient.delete(`${DIAGRAMS_ENDPOINT}/${id}/${userId}`);
-        } catch (error) {
-            throw handleAxiosError(error);
-        }
-    }
+interface DiagramResponse {
+  data: Diagram;
+  message: string;
 }
+
+interface DiagramsResponse {
+  data: Diagram[];
+  message: string;
+}
+
+export class DiagramService {
+  private static instance: DiagramService;
+  private readonly DIAGRAM_ENDPOINT = '/diagrams';
+  
+  private constructor() {}
+  
+  static getInstance(): DiagramService {
+    if (!DiagramService.instance) {
+      DiagramService.instance = new DiagramService();
+    }
+    return DiagramService.instance;
+  }
+  
+  async getDiagramsByUserId(userId: string): Promise<Diagram[]> {
+    try {
+      const response = await axiosClient.get<DiagramsResponse>(
+        `${this.DIAGRAM_ENDPOINT}/user/${userId}`
+      );
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener diagramas:', error);
+      throw error;
+    }
+  }
+  
+  async createDiagram(name: string, anfitrionId: string): Promise<Diagram> {
+    try {
+      const response = await axiosClient.post<DiagramResponse>(
+        `${this.DIAGRAM_ENDPOINT}`,
+        { name, anfitrionId }
+      );
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error al crear diagrama:', error);
+      throw error;
+    }
+  }
+  
+  async deleteDiagram(id: string, userId: string): Promise<void> {
+    try {
+      await axiosClient.delete(
+        `${this.DIAGRAM_ENDPOINT}/${id}?userId=${userId}`
+      );
+    } catch (error) {
+      console.error('Error al eliminar diagrama:', error);
+      throw error;
+    }
+  }
+  
+  // Método para transformar Diagram a DiagramData
+  transformToData(diagram: Diagram, userId: string, userEmail: string): DiagramData {
+    return {
+      ...diagram,
+      anfitrion: {
+        firstName: diagram.anfitrion.firstName,
+        lastName: diagram.anfitrion.lastName,
+        _id: userId,
+        email: userEmail
+      },
+      participantes: diagram.participantes.map(p => ({
+        firstName: p.firstName,
+        lastName: p.lastName,
+        _id: userId,
+        email: userEmail
+      })),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+  }
+}
+
+export default DiagramService.getInstance();

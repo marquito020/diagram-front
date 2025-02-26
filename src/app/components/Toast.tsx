@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { IoMdClose } from 'react-icons/io';
+import { IoMdClose, IoMdCheckmarkCircle, IoMdInformationCircle, IoMdWarning, IoMdCloseCircle } from 'react-icons/io';
 import { NotificationType, NOTIFICATION_DURATION, NotificationConfig } from '../constants/notifications';
 
 interface ToastProps {
@@ -11,10 +11,10 @@ interface ToastProps {
 }
 
 const toastIcons: Record<NotificationType, React.ReactNode> = {
-    [NotificationType.SUCCESS]: NotificationConfig[NotificationType.SUCCESS].icon,
-    [NotificationType.ERROR]: NotificationConfig[NotificationType.ERROR].icon,
-    [NotificationType.INFO]: NotificationConfig[NotificationType.INFO].icon,
-    [NotificationType.WARNING]: NotificationConfig[NotificationType.WARNING].icon
+    [NotificationType.SUCCESS]: <IoMdCheckmarkCircle className="w-5 h-5" />,
+    [NotificationType.ERROR]: <IoMdCloseCircle className="w-5 h-5" />,
+    [NotificationType.INFO]: <IoMdInformationCircle className="w-5 h-5" />,
+    [NotificationType.WARNING]: <IoMdWarning className="w-5 h-5" />
 };
 
 const toastStyles: Record<NotificationType, string> = {

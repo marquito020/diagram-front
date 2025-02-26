@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { loginUser } from "../../../app/store/slices/userSlice";
-import { AuthApi } from "../../../infrastructure/api/authApi";
 import { useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "../../../app/constants/routes";
 import { useAppDispatch } from "../../../app/store";
+import authService from "../../../infrastructure/api/authApi";
 
 interface RegisterState {
     loading: boolean;
@@ -26,8 +26,7 @@ export const useRegister = () => {
     }) => {
         setState(prev => ({ ...prev, loading: true, error: null }));
         try {
-            const authApi = new AuthApi();
-            const user = await authApi.register(userData);
+            const user = await authService.register(userData);
 
             dispatch(loginUser({
                 _id: user._id || "",

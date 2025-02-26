@@ -9,9 +9,9 @@ export enum NotificationType {
 }
 
 /**
- * Claves para almacenar datos de notificaciones en sessionStorage
+ * Claves para almacenar datos de notificaciones en localStorage
  */
-export const NotificationStorageKeys = {
+export const NotificationLocalStorageKeys = {
     WELCOME: 'welcomeUser',
     LOGOUT: 'showLogoutMessage'
 } as const;

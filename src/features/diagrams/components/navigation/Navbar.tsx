@@ -21,6 +21,9 @@ import { User } from "../../../../core/auth/entities/User";
 export default function Navbar() {
   // Estado y referencias
   const user = LocalStorageService.getItem<User>(StorageKeys.USER);
+
+  console.log(user);
+
   const { logout } = useLogout();
   const [showUserMenu, setShowUserMenu] = useState<boolean>(false);
   const userMenuRef = useRef<HTMLDivElement>(null);

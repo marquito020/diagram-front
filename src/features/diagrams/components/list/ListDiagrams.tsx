@@ -1,18 +1,24 @@
 import { useDiagramFetch } from "../../hooks/useDiagramFetch";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DiagramData } from "../../types/diagramTypes";
 import { Toast } from "../../../../app/components/Toast";
 import Loading from "../../../../app/components/Loading";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { motion } from "framer-motion";
-
+import { NotificationType } from "../../../../app/constants/notifications";
 export default function ListDiagrams() {
-    const { diagrams, loading, error, deleteDiagram } = useDiagramFetch();
+    const { diagrams, loading, error, deleteDiagram, refreshDiagrams } = useDiagramFetch();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedDiagram, setSelectedDiagram] = useState<DiagramData | null>(null);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
+
+    // Cargar diagramas cuando el componente se monte
+    useEffect(() => {
+        console.log("Cargando diagramas...");
+        refreshDiagrams();
+    }, [refreshDiagrams]);
 
     const handleDeleteClick = (diagram: DiagramData) => {
         setSelectedDiagram(diagram);
@@ -155,7 +161,7 @@ export default function ListDiagrams() {
             {showToast && (
                 <Toast
                     message={toastMessage}
-                    type={toastMessage.includes("error") ? "error" : "success"}
+                    type={toastMessage.includes("error") ? NotificationType.ERROR : NotificationType.SUCCESS}
                     onClose={() => setShowToast(false)}
                 />
             )}

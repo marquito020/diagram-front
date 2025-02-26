@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "../../../app/constants/routes";
 import { useAppDispatch } from "../../../app/store";
 import authService from "../../../infrastructure/api/authApi";
+import { LocalStorageService, StorageKeys } from "../../../infrastructure/storage/localStorage";
+import { NotificationLocalStorageKeys } from "../../../app/constants/notifications";
 
 interface RegisterState {
     loading: boolean;
@@ -35,8 +37,9 @@ export const useRegister = () => {
                 lastName: user.lastName
             }));
 
-            // Almacenamos el nombre de usuario en sessionStorage para recuperarlo después de la navegación
-            sessionStorage.setItem('welcomeUser', user.firstName);
+            LocalStorageService.setItem(NotificationLocalStorageKeys.WELCOME, user.firstName);
+
+            LocalStorageService.setItem(StorageKeys.USER, user);
 
             navigate(PrivateRoutes.HOME);
 

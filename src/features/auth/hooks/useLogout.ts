@@ -22,6 +22,8 @@ export const useLogout = () => {
             // También lo guardamos en localStorage
             LocalStorageService.setItem(NotificationLocalStorageKeys.LOGOUT, 'true');
 
+            LocalStorageService.removeItem(StorageKeys.USER);
+
             // Navegamos al login
             navigate(PublicRoutes.LOGIN);
         } catch (error) {

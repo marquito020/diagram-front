@@ -7,7 +7,7 @@ import { User } from "../../../core/auth/entities/User";
 import { NotificationLocalStorageKeys } from "../../../app/constants/notifications";
 import { useErrorHandler } from "../../../app/hooks/useErrorHandler";
 import authService from "../../../infrastructure/api/authApi";
-import { LocalStorageService } from "../../../infrastructure/storage/localStorage";
+import { LocalStorageService, StorageKeys } from "../../../infrastructure/storage/localStorage";
 
 interface LoginState {
   loading: boolean;
@@ -39,6 +39,8 @@ export const useAuth = () => {
 
       // También lo almacenamos en localStorage usando el servicio
       LocalStorageService.setItem(NotificationLocalStorageKeys.WELCOME, userData.firstName);
+
+      LocalStorageService.setItem(StorageKeys.USER, userData);
 
       // Navegamos a la página principal
       navigate(PrivateRoutes.HOME);

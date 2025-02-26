@@ -1,27 +1,48 @@
-// src/features/diagrams/components/CreateDiagram.tsx
+// src/features/diagrams/components/create/CreateDiagram.tsx
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useDiagramFetch } from "../../hooks/useDiagramFetch";
 import { useState } from 'react';
 import { CreateDiagramFormData } from "../../types/diagramTypes";
 import { Toast } from "../../../../app/components/Toast";
 import Loading from "../../../../app/components/Loading";
-import { motion } from "framer-motion";
 import { NotificationType } from "../../../../app/constants/notifications";
+
 export default function CreateDiagram() {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateDiagramFormData>();
     const { createDiagram, loading } = useDiagramFetch();
     const [isModalOpen, setModalOpen] = useState(false);
-    const [showToast, setShowToast] = useState(false);
+    const [toast, setToast] = useState<{
+        show: boolean;
+        message: string;
+        type: NotificationType;
+    }>({
+        show: false,
+        message: "",
+        type: NotificationType.SUCCESS
+    });
 
     const onSubmit: SubmitHandler<CreateDiagramFormData> = async (data) => {
         try {
             await createDiagram(data.name);
             setModalOpen(false);
             reset();
-            setShowToast(true);
+            setToast({
+                show: true,
+                message: "Diagrama creado exitosamente",
+                type: NotificationType.SUCCESS
+            });
         } catch (error) {
             console.error("Error creating diagram:", error);
+            setToast({
+                show: true,
+                message: "Error al crear el diagrama. Inténtalo de nuevo.",
+                type: NotificationType.ERROR
+            });
         }
+    };
+
+    const closeToast = () => {
+        setToast(prev => ({ ...prev, show: false }));
     };
 
     return (
@@ -40,75 +61,85 @@ export default function CreateDiagram() {
             </button>
 
             {isModalOpen && (
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.15 }}
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-                    <div className="bg-white bg-opacity-80 rounded-xl shadow-2xl w-full max-w-md p-6 transform transition-all">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-2xl font-bold text-gray-900">Crear Nuevo Diagrama</h3>
-                            <button
-                                onClick={() => setModalOpen(false)}
-                                className="text-gray-400 hover:text-gray-600 transition-colors"
-                            >
-                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
+                <div className="fixed inset-0 z-50 overflow-y-auto">
+                    <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
                         </div>
 
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Nombre del Diagrama
-                                </label>
-                                <input
-                                    {...register("name", {
-                                        required: "El nombre es requerido",
-                                        minLength: {
-                                            value: 3,
-                                            message: "El nombre debe tener al menos 3 caracteres"
-                                        }
-                                    })}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                    placeholder="Mi Diagrama"
-                                />
-                                {errors.name && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-                                )}
-                            </div>
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-                            <div className="flex justify-end gap-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setModalOpen(false)}
-                                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
-                                >
-                                    <svg className="w-5 h-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    {loading ? <Loading /> : "Crear Diagrama"}
-                                </button>
+                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div className="sm:flex sm:items-start">
+                                    <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-purple-100 sm:mx-0 sm:h-10 sm:w-10">
+                                        <svg className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </div>
+                                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                        <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                            Crear nuevo diagrama
+                                        </h3>
+                                        <div className="mt-2">
+                                            <p className="text-sm text-gray-500">
+                                                Ingresa un nombre para tu nuevo diagrama. Podrás editarlo y compartirlo más tarde.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-4">
+                                    <form onSubmit={handleSubmit(onSubmit)}>
+                                        <div className="mb-4">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Nombre del diagrama
+                                            </label>
+                                            <input
+                                                {...register("name", {
+                                                    required: "El nombre es requerido",
+                                                    minLength: {
+                                                        value: 3,
+                                                        message: "El nombre debe tener al menos 3 caracteres"
+                                                    }
+                                                })}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                                placeholder="Mi Diagrama"
+                                            />
+                                            {errors.name && (
+                                                <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                                            )}
+                                        </div>
+
+                                        <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                            <button
+                                                type="submit"
+                                                disabled={loading}
+                                                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-purple-600 text-base font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                            >
+                                                {loading ? <Loading /> : "Crear"}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setModalOpen(false)}
+                                                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                            >
+                                                Cancelar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </motion.div>
+                </div>
             )}
 
-            {showToast && (
+            {toast.show && (
                 <Toast
-                    message="Diagrama creado exitosamente"
-                    type={NotificationType.SUCCESS}
-                    onClose={() => setShowToast(false)}
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={closeToast}
                 />
             )}
         </>

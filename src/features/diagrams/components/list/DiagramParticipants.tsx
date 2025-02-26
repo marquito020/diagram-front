@@ -12,7 +12,7 @@ export default function DiagramParticipants({ participants, maxDisplay = 3 }: Pr
     return (
         <div className="flex items-center">
             <div className="flex -space-x-2">
-                {displayParticipants.map((participant, index) => (
+                {displayParticipants.map(participant => (
                     <div
                         key={participant._id}
                         className="relative"

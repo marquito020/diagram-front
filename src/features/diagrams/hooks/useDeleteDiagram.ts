@@ -1,49 +1,53 @@
-import { useState, useCallback } from 'react';
-import { useDiagramFetch } from '../hooks/useDiagramFetch';
+import { useState } from 'react';
 import { DiagramData } from '../types/diagramTypes';
+import { useDiagramFetch } from './useDiagramFetch';
 
-interface UseDeleteDiagramOptions {
+interface UseDeleteDiagramProps {
     onSuccess: () => void;
     onError: () => void;
 }
 
-export const useDeleteDiagram = ({ onSuccess, onError }: UseDeleteDiagramOptions) => {
+export const useDeleteDiagram = ({ onSuccess, onError }: UseDeleteDiagramProps) => {
+    const { deleteDiagram } = useDiagramFetch();
     const [deleteModal, setDeleteModal] = useState<{
         isOpen: boolean;
         diagram: DiagramData | null;
+        handleConfirm: () => void;
     }>({
         isOpen: false,
-        diagram: null
+        diagram: null,
+        handleConfirm: () => {}
     });
-    const { deleteDiagram } = useDiagramFetch();
 
-    const handleDelete = useCallback((diagram: DiagramData) => {
-        setDeleteModal({ isOpen: true, diagram });
-    }, []);
-
-    const handleConfirm = async () => {
-        if (!deleteModal.diagram) return;
-
-        try {
-            await deleteDiagram(deleteModal.diagram._id);
-            onSuccess();
-        } catch (error) {
-            onError();
-        } finally {
-            closeDeleteModal();
-        }
+    const handleDelete = (diagram: DiagramData) => {
+        setDeleteModal({
+            isOpen: true,
+            diagram,
+            handleConfirm: async () => {
+                try {
+                    await deleteDiagram(diagram._id);
+                    closeDeleteModal();
+                    // Llamar al callback de éxito proporcionado por el componente padre
+                    onSuccess();
+                } catch (error) {
+                    console.error('Error al eliminar el diagrama:', error);
+                    // Llamar al callback de error proporcionado por el componente padre
+                    onError();
+                }
+            }
+        });
     };
 
     const closeDeleteModal = () => {
-        setDeleteModal({ isOpen: false, diagram: null });
+        setDeleteModal(prev => ({
+            ...prev,
+            isOpen: false
+        }));
     };
 
     return {
-        deleteModal: {
-            ...deleteModal,
-            handleConfirm
-        },
         handleDelete,
+        deleteModal,
         closeDeleteModal
     };
-}; 
+};

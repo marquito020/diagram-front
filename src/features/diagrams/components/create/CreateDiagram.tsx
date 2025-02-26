@@ -1,25 +1,17 @@
 // src/features/diagrams/components/create/CreateDiagram.tsx
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useDiagramFetch } from "../../hooks/useDiagramFetch";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CreateDiagramFormData } from "../../types/diagramTypes";
 import { Toast } from "../../../../app/components/Toast";
 import Loading from "../../../../app/components/Loading";
-import { NotificationType } from "../../../../app/constants/notifications";
+import { DiagramMessages, DiagramToastTypes, INITIAL_TOAST_STATE, ToastState } from "../../../../app/constants/diagramMessages";
 
 export default function CreateDiagram() {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateDiagramFormData>();
     const { createDiagram, loading } = useDiagramFetch();
     const [isModalOpen, setModalOpen] = useState(false);
-    const [toast, setToast] = useState<{
-        show: boolean;
-        message: string;
-        type: NotificationType;
-    }>({
-        show: false,
-        message: "",
-        type: NotificationType.SUCCESS
-    });
+    const [toast, setToast] = useState<ToastState>(INITIAL_TOAST_STATE);
 
     const onSubmit: SubmitHandler<CreateDiagramFormData> = async (data) => {
         try {
@@ -28,15 +20,15 @@ export default function CreateDiagram() {
             reset();
             setToast({
                 show: true,
-                message: "Diagrama creado exitosamente",
-                type: NotificationType.SUCCESS
+                message: DiagramMessages.CREATE_SUCCESS,
+                type: DiagramToastTypes.CREATE.SUCCESS
             });
         } catch (error) {
             console.error("Error creating diagram:", error);
             setToast({
                 show: true,
-                message: "Error al crear el diagrama. Inténtalo de nuevo.",
-                type: NotificationType.ERROR
+                message: DiagramMessages.CREATE_ERROR,
+                type: DiagramToastTypes.CREATE.ERROR
             });
         }
     };
@@ -44,6 +36,13 @@ export default function CreateDiagram() {
     const closeToast = () => {
         setToast(prev => ({ ...prev, show: false }));
     };
+
+    // Limpiar el toast cuando se desmonte el componente
+    useEffect(() => {
+        return () => {
+            setToast(INITIAL_TOAST_STATE);
+        };
+    }, []);
 
     return (
         <>

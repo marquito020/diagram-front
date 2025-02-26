@@ -7,7 +7,7 @@ import { useState } from "react";
 
 export default function Navbar() {
   const user = useAppSelector((state: AppState) => state.user);
-  const { logout, error, loading } = useLogout();
+  const { logout } = useLogout();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   return (
@@ -88,8 +88,6 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
-      {error && <div className="text-red-500">{error}</div>}
-      {loading && <div className="text-gray-500">Cerrando sesión...</div>}
     </>
   );
 }

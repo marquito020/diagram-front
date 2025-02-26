@@ -4,13 +4,11 @@ import { loginUserAction } from "../../../app/store/actions/userActions";
 import { AuthApi } from "../../../infrastructure/api/authApi";
 import { useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "../../../app/constants/routes";
-import { useNotification } from "../../../app/context/NotificationContext";
 import { User } from "../../../core/auth/entities/User";
 import {
-  NotificationType,
   NotificationStorageKeys,
-  NotificationMessages
 } from "../../../app/constants/notifications";
+import { useErrorHandler } from "../../../app/hooks/useErrorHandler";
 
 interface LoginState {
   loading: boolean;
@@ -24,7 +22,7 @@ export const useAuth = () => {
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { showNotification } = useNotification();
+  const { handleError } = useErrorHandler();
 
   const login = async (email: string, password: string): Promise<User> => {
     setState(prev => ({ ...prev, loading: true, error: null }));
@@ -47,10 +45,9 @@ export const useAuth = () => {
 
       return userData;
     } catch (error) {
-      const message = error instanceof Error ? error.message : NotificationMessages.GENERIC_ERROR;
-      setState(prev => ({ ...prev, error: message }));
-      showNotification(message, NotificationType.ERROR);
-      throw error;
+      const appError = handleError(error, true);
+      setState(prev => ({ ...prev, error: appError.message }));
+      throw appError;
     } finally {
       setState(prev => ({ ...prev, loading: false }));
     }

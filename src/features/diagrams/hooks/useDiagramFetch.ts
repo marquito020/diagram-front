@@ -13,11 +13,13 @@ import {
     setLoadingAction,
     setErrorAction
 } from "../../../app/store/actions/diagramActions";
+import { useErrorHandler } from "../../../app/hooks/useErrorHandler";
 
 export const useDiagramFetch = () => {
     const dispatch = useAppDispatch();
     const { diagrams, loading, error } = useAppSelector(state => state.diagrams);
     const user = useAppSelector(state => state.user);
+    const { handleError } = useErrorHandler();
 
     const diagramApi = new DiagramApi();
     const getDiagramsUseCase = new GetDiagramsByUserId(diagramApi);
@@ -47,8 +49,8 @@ export const useDiagramFetch = () => {
             }));
             dispatch(setDiagramsAction(diagramsData));
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Error al cargar los diagramas";
-            dispatch(setErrorAction(errorMessage));
+            const appError = handleError(error);
+            dispatch(setErrorAction(appError.message));
         } finally {
             dispatch(setLoadingAction(false));
         }
@@ -78,9 +80,9 @@ export const useDiagramFetch = () => {
             dispatch(addDiagramAction(diagramData));
             return diagramData;
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Error al crear el diagrama";
-            dispatch(setErrorAction(errorMessage));
-            throw new Error(errorMessage);
+            const appError = handleError(error);
+            dispatch(setErrorAction(appError.message));
+            throw appError;
         } finally {
             dispatch(setLoadingAction(false));
         }
@@ -92,9 +94,9 @@ export const useDiagramFetch = () => {
             await deleteDiagramUseCase.execute(id, user._id);
             dispatch(deleteDiagramAction(id));
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Error al eliminar el diagrama";
-            dispatch(setErrorAction(errorMessage));
-            throw new Error(errorMessage);
+            const appError = handleError(error);
+            dispatch(setErrorAction(appError.message));
+            throw appError;
         } finally {
             dispatch(setLoadingAction(false));
         }

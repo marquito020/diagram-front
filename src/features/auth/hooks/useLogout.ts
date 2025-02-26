@@ -1,48 +1,34 @@
-import { useState } from "react";
 import { useAppDispatch } from "../../../app/store";
 import { logoutUserAction } from "../../../app/store/actions/userActions";
 import { useNavigate } from "react-router-dom";
 import { PublicRoutes } from "../../../app/constants/routes";
-import { NotificationTypes } from "../../../app/constants/notifications";
-
-interface LogoutState {
-    loading: boolean;
-    error: string | null;
-}
+import { NotificationStorageKeys } from "../../../app/constants/notifications";
+import { useErrorHandler } from "../../../app/hooks/useErrorHandler";
 
 export const useLogout = () => {
-    const [state, setState] = useState<LogoutState>({
-        loading: false,
-        error: null
-    });
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const { handleError } = useErrorHandler();
 
-    const logout = async (): Promise<void> => {
-        setState(prev => ({ ...prev, loading: true, error: null }));
+    const logout = () => {
         try {
-            // Eliminar token del localStorage
+            // Limpiamos el token si existe
             localStorage.removeItem('token');
 
-            // Limpiar el estado de Redux
+            // Dispatch de la acción de logout
             dispatch(logoutUserAction());
 
             // Guardamos el estado de logout para mostrar el mensaje
-            sessionStorage.setItem(NotificationTypes.LOGOUT, 'true');
+            sessionStorage.setItem(NotificationStorageKeys.LOGOUT, 'true');
 
-            // Navegar al login después de un breve delay
+            // Navegamos al login
             navigate(PublicRoutes.LOGIN);
         } catch (error) {
-            const message = error instanceof Error ? error.message : "Error al cerrar sesión";
-            setState(prev => ({ ...prev, error: message }));
-            throw error;
-        } finally {
-            setState(prev => ({ ...prev, loading: false }));
+            handleError(error);
         }
     };
 
     return {
-        ...state,
-        logout,
+        logout
     };
 };

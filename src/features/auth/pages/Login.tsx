@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { PublicRoutes } from "../../../app/constants/routes";
-import LoginForm from "./LoginForm";
+import LoginForm from "../components/LoginForm";
 import { motion } from "framer-motion";
 import { FaProjectDiagram } from "react-icons/fa";
 

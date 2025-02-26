@@ -2,19 +2,8 @@ import CreateDiagram from "../components/creation/CreateDiagram";
 import ListDiagrams from "../components/list/ListDiagrams";
 import Navbar from "../components/navigation/Navbar";
 import { motion } from "framer-motion";
-// import { useNotification } from "../../../app/context/NotificationContext";
 
 export default function DiagramsPage() {
-    // const { showNotification } = useNotification();
-    
-    // Verificamos y mostramos la notificación de bienvenida inmediatamente
-    // sin usar useEffect
-    // const welcomeUser = sessionStorage.getItem('welcomeUser');
-    // if (welcomeUser) {
-    //     console.log("Bienvenido", welcomeUser);
-    //     showNotification(`¡Bienvenido ${welcomeUser}!`, "success");
-    //     sessionStorage.removeItem('welcomeUser');
-    // }
 
     return (
         <>

@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from '../../../../app/store/slices/userSlice';
-import Login from '../Login';
+import Login from '../../pages/Login';
 import { expect, vi } from 'vitest';
 
 // Mock del hook useNavigate

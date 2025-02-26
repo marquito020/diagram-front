@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useLogout } from "../../../auth/hooks/useLogout";
-import { PrivateRoutes } from "../../../../app/constants/routes";
+import { useLogout } from "../../features/auth/hooks/useLogout";
+import { PrivateRoutes } from "../constants/routes";
 import {
   FaProjectDiagram,
   FaUserCircle,
@@ -10,8 +10,8 @@ import {
   FaChartLine,
   FaSitemap
 } from "react-icons/fa";
-import { LocalStorageService, StorageKeys } from '../../../../infrastructure/storage/localStorage';
-import { User } from "../../../../core/auth/entities/User";
+import { LocalStorageService, StorageKeys } from '../../infrastructure/storage/localStorage';
+import { User } from "../../core/auth/entities/User";
 
 /**
  * Componente de navegación principal de la aplicación

@@ -1,6 +1,6 @@
-import CreateDiagram from "../components/creation/CreateDiagram";
+import CreateDiagram from "../components/create/CreateDiagram";
 import ListDiagrams from "../components/list/ListDiagrams";
-import Navbar from "../components/navigation/Navbar";
+import Navbar from "../../../app/components/Navbar";
 import { motion } from "framer-motion";
 
 export default function DiagramsPage() {

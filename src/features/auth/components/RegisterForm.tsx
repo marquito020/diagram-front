@@ -105,7 +105,7 @@ export default function RegisterForm() {
                         className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-all duration-200 flex items-center justify-center"
                         disabled={loading}
                     >
-                        {loading ? <Loading /> : "Register"}
+                        {loading ? <Loading theme="dark" size="sm" text="Registrando..." /> : "Register"}
                     </button>
                 </div>
             </form>
@@ -114,7 +114,7 @@ export default function RegisterForm() {
             {showToast && (
                 <Toast
                     message={toastMessage}
-                    type={toastType}
+                    type={toastType || undefined}
                     onClose={() => setShowToast(false)}
                 />
             )}

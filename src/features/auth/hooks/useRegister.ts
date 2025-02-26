@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { loginUser } from "../../../app/store/slices/userSlice";
+import { loginUserAction } from "../../../app/store/actions/userActions";
 import { useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "../../../app/constants/routes";
 import { useAppDispatch } from "../../../app/store";
 import authService from "../../../infrastructure/api/authApi";
 import { LocalStorageService, StorageKeys } from "../../../infrastructure/storage/localStorage";
-import { NotificationLocalStorageKeys } from "../../../app/constants/notifications";
+import { NotificationLocalStorageKeys, NotificationType } from "../../../app/constants/notifications";
+import { handleAxiosError } from "../../../infrastructure/api/handleAxiosError";
 
 interface RegisterState {
     loading: boolean;
@@ -13,6 +14,9 @@ interface RegisterState {
 }
 
 export const useRegister = () => {
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+    const [toastType, setToastType] = useState<NotificationType | null>(null);
     const [state, setState] = useState<RegisterState>({
         loading: false,
         error: null
@@ -30,24 +34,24 @@ export const useRegister = () => {
         try {
             const user = await authService.register(userData);
 
-            dispatch(loginUser({
+            dispatch(loginUserAction({
                 _id: user._id || "",
                 email: user.email,
                 firstName: user.firstName,
                 lastName: user.lastName
             }));
 
-            LocalStorageService.setItem(NotificationLocalStorageKeys.WELCOME, user.firstName);
-
-            LocalStorageService.setItem(StorageKeys.USER, user);
-
             navigate(PrivateRoutes.HOME);
 
             return user;
         } catch (error) {
-            const message = error instanceof Error ? error.message : "Error en el registro";
-            setState(prev => ({ ...prev, error: message }));
-            throw error;
+            const appError = handleAxiosError(error);
+            const errorMessage = appError.getErrorMessage();
+            setState(prev => ({ ...prev, error: errorMessage }));
+            setShowToast(true);
+            setToastType(NotificationType.ERROR);
+            setToastMessage(errorMessage);
+            throw appError;
         } finally {
             setState(prev => ({ ...prev, loading: false }));
         }
@@ -56,5 +60,9 @@ export const useRegister = () => {
     return {
         ...state,
         register,
+        showToast,
+        toastMessage,
+        toastType,
+        setShowToast
     };
 };

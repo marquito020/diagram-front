@@ -4,10 +4,8 @@ import { loginUserAction } from "../../../app/store/actions/userActions";
 import { useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "../../../app/constants/routes";
 import { User } from "../../../core/auth/entities/User";
-import { NotificationLocalStorageKeys } from "../../../app/constants/notifications";
 import { useErrorHandler } from "../../../app/hooks/useErrorHandler";
 import authService from "../../../infrastructure/api/authApi";
-import { LocalStorageService, StorageKeys } from "../../../infrastructure/storage/localStorage";
 
 interface LoginState {
   loading: boolean;
@@ -28,7 +26,7 @@ export const useAuth = () => {
     try {
       const userData = await authService.login(email, password);
 
-      console.log(userData);
+      // console.log(userData);
 
       dispatch(loginUserAction({
         _id: userData._id || "",
@@ -36,11 +34,6 @@ export const useAuth = () => {
         firstName: userData.firstName,
         lastName: userData.lastName
       }));
-
-      // También lo almacenamos en localStorage usando el servicio
-      LocalStorageService.setItem(NotificationLocalStorageKeys.WELCOME, userData.firstName);
-
-      LocalStorageService.setItem(StorageKeys.USER, userData);
 
       // Navegamos a la página principal
       navigate(PrivateRoutes.HOME);

@@ -97,7 +97,7 @@ export default function LoginForm() {
                         className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-all duration-200 flex items-center justify-center"
                         disabled={loading}
                     >
-                        {loading ? <Loading /> : "Login"}
+                        {loading ? <Loading theme="dark" size="sm" text="Iniciando sesión..." /> : "Login"}
                     </button>
                 </div>
             </form>

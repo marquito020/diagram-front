@@ -29,9 +29,7 @@ describe('useAuth Hook', () => {
         const { result } = renderHook(() => useAuth());
 
         expect(result.current.loading).toBe(false);
-        expect(result.current.showToast).toBe(false);
-        expect(result.current.toastMessage).toBe('');
-        expect(result.current.toastType).toBe('success');
+        expect(result.current.error).toBe(null);
     });
 
     it('should handle successful login', async () => {

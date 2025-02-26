@@ -6,7 +6,7 @@ import { CreateDiagramFormData } from "../../types/diagramTypes";
 import { Toast } from "../../../../app/components/Toast";
 import Loading from "../../../../app/components/Loading";
 import { motion } from "framer-motion";
-
+import { NotificationType } from "../../../../app/constants/notifications";
 export default function CreateDiagram() {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateDiagramFormData>();
     const { createDiagram, loading } = useDiagramFetch();
@@ -107,7 +107,7 @@ export default function CreateDiagram() {
             {showToast && (
                 <Toast
                     message="Diagrama creado exitosamente"
-                    type="success"
+                    type={NotificationType.SUCCESS}
                     onClose={() => setShowToast(false)}
                 />
             )}

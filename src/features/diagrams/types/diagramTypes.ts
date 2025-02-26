@@ -3,7 +3,7 @@ export interface CreateDiagramFormData {
     name: string;
 }
 
-export interface DiagramParticipant {
+export interface DiagramUser {
     _id: string;
     firstName: string;
     lastName: string;
@@ -13,8 +13,8 @@ export interface DiagramParticipant {
 export interface DiagramData {
     _id: string;
     name: string;
-    anfitrion: DiagramParticipant;
-    participantes?: DiagramParticipant[];
+    user: DiagramUser;
+    sharedUsers?: DiagramUser[];
     createdAt: string;
     updatedAt: string;
 }

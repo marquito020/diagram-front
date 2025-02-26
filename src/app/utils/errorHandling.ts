@@ -5,6 +5,7 @@ export enum ErrorCode {
     VALIDATION_ERROR = 'VALIDATION_ERROR',
     NOT_FOUND = 'NOT_FOUND',
     FORBIDDEN = 'FORBIDDEN',
+    CONFLICT = 'CONFLICT',
     UNKNOWN_ERROR = 'UNKNOWN_ERROR'
 }
 
@@ -37,6 +38,8 @@ export class AppError extends Error {
                     return new AppError('No tienes permisos para realizar esta acción', ErrorCode.FORBIDDEN, status);
                 case 404:
                     return new AppError('Recurso no encontrado', ErrorCode.NOT_FOUND, status);
+                case 409:
+                    return new AppError('Recurso ya existe', ErrorCode.CONFLICT, status);
                 case 500:
                 default:
                     return new AppError('Error en el servidor', ErrorCode.SERVER_ERROR, status);
@@ -68,6 +71,8 @@ export class AppError extends Error {
                 return 'Error en el servidor. Inténtalo más tarde.';
             case ErrorCode.VALIDATION_ERROR:
                 return `Error de validación: ${this.message}`;
+            case ErrorCode.CONFLICT:
+                return `Error de conflicto: ${this.message}`;
             case ErrorCode.NOT_FOUND:
                 return 'El recurso solicitado no existe.';
             case ErrorCode.FORBIDDEN:

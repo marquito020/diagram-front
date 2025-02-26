@@ -1,5 +1,7 @@
 import axiosClient from './axiosClient';
 import { User } from '../../core/auth/entities/User';
+import { StorageKeys } from '../storage/localStorage';
+import { LocalStorageService } from '../storage/localStorage';
 
 interface LoginResponse {
     data: {
@@ -12,6 +14,7 @@ interface LoginResponse {
 interface RegisterResponse {
     data: {
         user: User;
+        access_token: string;
     };
     message: string;
 }
@@ -38,10 +41,10 @@ export class AuthService {
             );
 
             if (response.data?.access_token) {
-                localStorage.setItem('token', response.data.access_token);
+                this.saveToken(response.data.access_token);
+            } else {
+                throw new Error('No se recibió un token de acceso');
             }
-
-            // console.log(response.data.user);
 
             return {
                 _id: response.data.user._id,
@@ -62,6 +65,12 @@ export class AuthService {
                 `${this.USER_ENDPOINT}`,
                 user
             );
+
+            if (response.data?.access_token) {
+                this.saveToken(response.data.access_token);
+            } else {
+                throw new Error('No se recibió un token de acceso');
+            }
 
             return response.data.user;
         } catch (error) {
@@ -84,7 +93,12 @@ export class AuthService {
     }
 
     logout(): void {
-        localStorage.removeItem('token');
+        LocalStorageService.removeItem(StorageKeys.TOKEN);
+    }
+
+    //token lo guardamos en el localStorage
+    saveToken(token: string): void {
+        LocalStorageService.setItem(StorageKeys.TOKEN, token);
     }
 }
 

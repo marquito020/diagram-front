@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { UserState } from '../../../@types/store';
 import { LocalStorageService, StorageKeys } from '../../../infrastructure/storage/localStorage';
+import { NotificationLocalStorageKeys } from '../../constants/notifications';
 
 const initialState: UserState = {
     _id: '',
@@ -20,11 +21,16 @@ const userSlice = createSlice({
                 isAuthenticated: true
             };
 
+            // console.log("Usuario autenticado:", newState);
+
             LocalStorageService.setItem(StorageKeys.USER, newState);
+
+            LocalStorageService.setItem(NotificationLocalStorageKeys.WELCOME, newState.firstName);
 
             return newState;
         },
         logoutUser: () => {
+            console.log("Cerrando sesión...");
             LocalStorageService.removeItem(StorageKeys.USER);
             return initialState;
         },

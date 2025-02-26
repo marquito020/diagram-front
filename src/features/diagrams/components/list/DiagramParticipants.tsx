@@ -1,7 +1,7 @@
-import { DiagramParticipant } from "../../types/diagramTypes";
+import { DiagramUser } from "../../types/diagramTypes";
 
 interface Props {
-    participants: DiagramParticipant[];
+    participants: DiagramUser[];
     maxDisplay?: number;
 }
 
@@ -35,4 +35,4 @@ export default function DiagramParticipants({ participants, maxDisplay = 3 }: Pr
             </span>
         </div>
     );
-} 
+}

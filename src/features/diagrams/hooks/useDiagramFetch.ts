@@ -7,7 +7,8 @@ import {
     addDiagramAction,
     deleteDiagramAction,
     setLoadingAction,
-    setErrorAction
+    setErrorAction,
+    updateDiagramAction
 } from "../../../app/store/actions/diagramActions";
 import { useErrorHandler } from "../../../app/hooks/useErrorHandler";
 import diagramService from "../../../infrastructure/api/diagramApi";
@@ -31,6 +32,8 @@ interface UseDiagramFetchResult {
     deleteDiagram: (id: string) => Promise<void>;
     /** Función para recargar la lista de diagramas */
     refreshDiagrams: () => Promise<DiagramData[]>;
+    /** Función para agregar un participante a un diagrama por correo electrónico */
+    addParticipantToDiagram: (diagramId: string, participantEmail: string) => Promise<DiagramData>;
 }
 
 /**
@@ -161,6 +164,39 @@ export const useDiagramFetch = (): UseDiagramFetchResult => {
         }
     }, [dispatch, handleError]);
 
+    /**
+     * Agregar un participante a un diagrama por correo electrónico
+     *
+     * @param {string} diagramId ID del diagrama al que se agregará el participante
+     * @param {string} participantEmail Correo electrónico del participante a agregar
+     * @returns {Promise<DiagramData>} Datos del diagrama actualizado
+     */
+    const addParticipantToDiagram = useCallback(async (diagramId: string, participantEmail: string): Promise<DiagramData> => {
+        if (!userRef.current?._id) {
+            throw new Error("No hay un usuario autenticado");
+        }
+
+        dispatch(setLoadingAction(true));
+
+        try {
+            const userId = userRef.current._id;
+            const userEmail = userRef.current.email || "";
+
+            const updatedDiagram = await diagramService.addParticipantToDiagram(diagramId, participantEmail);
+            const diagramData = diagramService.transformToData(updatedDiagram, userId, userEmail);
+
+            dispatch(updateDiagramAction(diagramData));
+
+            return diagramData;
+        } catch (error) {
+            const appError = handleError(error);
+            dispatch(setErrorAction(appError.message));
+            throw appError;
+        } finally {
+            dispatch(setLoadingAction(false));
+        }
+    }, [dispatch, handleError]);
+
     // Cargar diagramas al inicializar el hook
     useEffect((): void => {
         // Solo cargar si hay un usuario y no se han cargado antes
@@ -195,6 +231,7 @@ export const useDiagramFetch = (): UseDiagramFetchResult => {
         error,
         createDiagram,
         deleteDiagram,
-        refreshDiagrams: fetchDiagrams
+        refreshDiagrams: fetchDiagrams,
+        addParticipantToDiagram
     };
 };

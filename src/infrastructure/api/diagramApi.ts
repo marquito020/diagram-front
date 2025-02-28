@@ -70,6 +70,25 @@ export class DiagramService {
         }
     }
 
+    // add participant to diagram by email
+    async addParticipantToDiagram(diagramId: string, participantEmail: string): Promise<Diagram> {
+        if (!diagramId || !participantEmail) {
+            throw new Error('Se requieren ID de diagrama y correo electrónico del participante');
+        }
+
+        try {
+            const response = await axiosClient.post<ApiResponseVariant<Diagram>>(
+                `${this.DIAGRAM_ENDPOINT}/${diagramId}/shared-user-by-email`,
+                { email: participantEmail }
+            );
+
+            return this.extractData(response);
+        } catch (error) {
+            console.error('Error al agregar participante al diagrama:', error);
+            throw error;
+        }
+    }
+
     async createDiagram(name: string, user: string): Promise<Diagram> {
         if (!user) {
             throw new Error('Se requiere un ID de usuario para crear un diagrama');

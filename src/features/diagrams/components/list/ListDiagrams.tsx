@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { useDiagramFetch } from "../../hooks/useDiagramFetch";
 import { Toast } from "../../../../app/components/Toast";
 import { DiagramCard } from './DiagramCard';
-import { DeleteModal } from './DeleteModal';
+import { DeleteModal } from '../delete/DeleteModal';
 import { EditModal } from "../edit/EditModal";
 import { useDeleteDiagram } from '../../hooks/useDeleteDiagram';
 import { motion } from "framer-motion";

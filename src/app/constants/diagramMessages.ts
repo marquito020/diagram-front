@@ -58,7 +58,7 @@ export const DIAGRAM_TOAST_DURATION = 3000;
 /**
  * Estado inicial para el Toast en componentes de diagramas
  */
-export const INITIAL_TOAST_STATE = {
+export const INITIAL_TOAST_STATE : ToastState = {
     show: false,
     message: '',
     type: NotificationType.SUCCESS

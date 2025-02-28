@@ -89,6 +89,43 @@ export class DiagramService {
         }
     }
 
+    // Eliminar participante de un diagrama
+    async removeParticipantFromDiagram(diagramId: string, participantId: string): Promise<Diagram> {
+        if (!diagramId || !participantId) {
+            throw new Error('Se requieren ID de diagrama y ID del participante');
+        }
+
+        try {
+            const response = await axiosClient.delete<ApiResponseVariant<Diagram>>(
+                `${this.DIAGRAM_ENDPOINT}/${diagramId}/shared-user/${participantId}`
+            );
+
+            return this.extractData(response);
+        } catch (error) {
+            console.error('Error al eliminar participante del diagrama:', error);
+            throw error;
+        }
+    }
+
+    // Actualizar el nombre de un diagrama
+    async updateDiagramName(diagramId: string, newName: string): Promise<Diagram> {
+        if (!diagramId || !newName) {
+            throw new Error('Se requieren ID de diagrama y nuevo nombre');
+        }
+
+        try {
+            const response = await axiosClient.patch<ApiResponseVariant<Diagram>>(
+                `${this.DIAGRAM_ENDPOINT}/${diagramId}`,
+                { name: newName }
+            );
+
+            return this.extractData(response);
+        } catch (error) {
+            console.error('Error al actualizar el nombre del diagrama:', error);
+            throw error;
+        }
+    }
+
     async createDiagram(name: string, user: string): Promise<Diagram> {
         if (!user) {
             throw new Error('Se requiere un ID de usuario para crear un diagrama');

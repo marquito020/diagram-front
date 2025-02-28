@@ -3,12 +3,13 @@ import { useDiagramFetch } from "../../hooks/useDiagramFetch";
 import { Toast } from "../../../../app/components/Toast";
 import { DiagramCard } from './DiagramCard';
 import { DeleteModal } from './DeleteModal';
+import { EditModal } from "../edit/EditModal";
 import { useDeleteDiagram } from '../../hooks/useDeleteDiagram';
 import { motion } from "framer-motion";
 import { DiagramMessages, DiagramToastTypes, INITIAL_TOAST_STATE, ToastState } from "../../../../app/constants/diagramMessages";
 import DiagramsHeader from "./DiagramsHeader";
 import { LoadingState, ErrorState, EmptyState } from "./DiagramStates";
-
+import { useUpdateDiagram } from "../../hooks/useUpdateDiagram";
 /**
  * Componente principal que muestra la lista de diagramas
  * Utiliza varios hooks personalizados para gestionar los diagramas y su eliminación
@@ -17,11 +18,13 @@ const ListDiagrams = () => {
     const { diagrams, loading, error, refreshDiagrams } = useDiagramFetch();
     const [toast, setToast] = useState<ToastState>(INITIAL_TOAST_STATE);
 
+    // Función para cerrar el toast
     const closeToast = useCallback(() => {
         setToast(prev => ({ ...prev, show: false }));
     }, []);
 
-    const handleSuccess = useCallback(() => {
+    // Funciones para manejar el éxito y error en la eliminación
+    const handleDeleteSuccess = useCallback(() => {
         setToast({
             show: true,
             message: DiagramMessages.DELETE_SUCCESS,
@@ -30,7 +33,7 @@ const ListDiagrams = () => {
         refreshDiagrams();
     }, [refreshDiagrams]);
 
-    const handleError = useCallback(() => {
+    const handleDeleteError = useCallback(() => {
         setToast({
             show: true,
             message: DiagramMessages.DELETE_ERROR,
@@ -38,11 +41,37 @@ const ListDiagrams = () => {
         });
     }, []);
 
+    // Hook para manejar la eliminación de diagramas
     const { handleDelete, deleteModal, closeDeleteModal } = useDeleteDiagram({
-        onSuccess: handleSuccess,
-        onError: handleError
+        onSuccess: handleDeleteSuccess,
+        onError: handleDeleteError
     });
 
+    // Funciones para manejar el éxito y error en la actualización de diagramas
+    const handleUpdateSuccess = useCallback(() => {
+        setToast({
+            show: true,
+            message: DiagramMessages.UPDATE_SUCCESS,
+            type: DiagramToastTypes.UPDATE.SUCCESS
+        });
+        refreshDiagrams();
+    }, [refreshDiagrams]);
+
+    const handleUpdateError = useCallback(() => {
+        setToast({
+            show: true,
+            message: DiagramMessages.UPDATE_ERROR,
+            type: DiagramToastTypes.UPDATE.ERROR
+        });
+    }, []);
+
+    // Hook para manejar la actualización de diagramas
+    const { handleUpdate, updateModal, closeUpdateModal } = useUpdateDiagram({
+        onSuccess: handleUpdateSuccess,
+        onError: handleUpdateError
+    });
+
+    // Renderizar la lista de diagramas
     const renderDiagramList = useCallback(() => (
         <motion.div
             initial={{ opacity: 0 }}
@@ -54,11 +83,13 @@ const ListDiagrams = () => {
                     key={diagram._id}
                     diagram={diagram}
                     onDelete={handleDelete}
+                    onUpdate={handleUpdate}
                 />
             ))}
         </motion.div>
-    ), [diagrams, handleDelete]);
+    ), [diagrams, handleDelete, handleUpdate]);
 
+    // Renderizar el toast
     const renderToast = useCallback(() => (
         toast.show ? (
             <Toast
@@ -69,6 +100,7 @@ const ListDiagrams = () => {
         ) : null
     ), [toast, closeToast]);
 
+    // Renderizar el modal de eliminación
     const renderDeleteModal = useCallback(() => (
         <DeleteModal
             isOpen={deleteModal.isOpen}
@@ -78,6 +110,17 @@ const ListDiagrams = () => {
         />
     ), [deleteModal, closeDeleteModal]);
 
+    // Renderizar el modal de actualización solo si está abierto
+    const renderUpdateModal = useCallback(() => (
+        <EditModal
+            isOpen={updateModal.isOpen}
+            diagram={updateModal.diagram}
+            onClose={closeUpdateModal}
+            onUpdate={updateModal.handleConfirm}
+        />
+    ), [updateModal, closeUpdateModal]);
+
+    // Renderizar según el estado
     if (loading) {
         return (
             <>
@@ -101,6 +144,7 @@ const ListDiagrams = () => {
             <>
                 <EmptyState onRefresh={refreshDiagrams} renderToast={renderToast} />
                 {renderDeleteModal()}
+                {renderUpdateModal()}
             </>
         );
     }
@@ -110,6 +154,7 @@ const ListDiagrams = () => {
             <DiagramsHeader count={diagrams.length} onRefresh={refreshDiagrams} />
             {renderDiagramList()}
             {renderDeleteModal()}
+            {renderUpdateModal()}
             {renderToast()}
         </>
     );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DiagramData } from '../../types/diagramTypes';
 import Modal from '../../../../app/components/Modal';
-import { ModalConstants, ModalTitles, ModalDescriptions, ModalIcons, ModalButtons } from '../../../../app/constants/modals';
+import { ModalConstants, ModalTitles, ModalDescriptions, ModalIcons, ModalButtons, ModalPlaceholders, ModalLabels, ModalAddParticipantLabels, ModalSharedParticipantsDescription } from '../../../../app/constants/modals';
 
 interface EditModalProps {
     isOpen: boolean;
@@ -27,7 +27,17 @@ export const EditModal: React.FC<EditModalProps> = ({
 
     const title = ModalTitles[ModalConstants.EDIT_DIAGRAM];
     const description = ModalDescriptions[ModalConstants.EDIT_DIAGRAM];
+    const label = ModalLabels[ModalConstants.EDIT_DIAGRAM];
     const button = ModalButtons[ModalConstants.EDIT_DIAGRAM];
+    const icon = ModalIcons[ModalConstants.EDIT_DIAGRAM];
+    const addParticipantButton = ModalButtons[ModalConstants.ADD_PARTICIPANT];
+    const addParticipantTitle = ModalTitles[ModalConstants.ADD_PARTICIPANT];
+    const addParticipantDescription = ModalDescriptions[ModalConstants.ADD_PARTICIPANT];
+    const addParticipantPlaceholder = ModalPlaceholders[ModalConstants.ADD_PARTICIPANT];
+    const placeholder = ModalPlaceholders[ModalConstants.EDIT_DIAGRAM];
+    const addParticipantLabel = ModalAddParticipantLabels[ModalConstants.ADD_PARTICIPANT];
+    const sharedParticipantsLabel = ModalAddParticipantLabels[ModalConstants.EDIT_DIAGRAM];
+    const sharedParticipantsDescription = ModalSharedParticipantsDescription[ModalConstants.EDIT_DIAGRAM];
 
     useEffect(() => {
         if (diagram) {
@@ -41,7 +51,7 @@ export const EditModal: React.FC<EditModalProps> = ({
     // Renderizar el icono basado en la constante
     const modalIcon = (
         <svg className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            {ModalIcons[ModalConstants.EDIT_DIAGRAM] === 'pencil-alt' && (
+            {icon === 'pencil-alt' && (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             )}
         </svg>
@@ -151,7 +161,7 @@ export const EditModal: React.FC<EditModalProps> = ({
                 {/* Nombre del diagrama */}
                 <div>
                     <label htmlFor="diagram-name" className="block text-sm font-medium text-gray-700 mb-1">
-                        Nombre del diagrama
+                        {label}
                     </label>
                     <input
                         type="text"
@@ -162,7 +172,7 @@ export const EditModal: React.FC<EditModalProps> = ({
                             setError(null);
                         }}
                         className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Nombre del diagrama"
+                        placeholder={placeholder}
                     />
                     {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
                 </div>
@@ -170,8 +180,11 @@ export const EditModal: React.FC<EditModalProps> = ({
                 {/* Añadir nuevos participantes */}
                 <div>
                     <label htmlFor="participant-email" className="block text-sm font-medium text-gray-700 mb-1">
-                        Añadir participantes
+                        {addParticipantTitle}
                     </label>
+                    <p className="text-sm text-gray-500 mb-2">
+                        {addParticipantDescription}
+                    </p>
                     <div className="flex space-x-2">
                         <input
                             type="email"
@@ -183,14 +196,14 @@ export const EditModal: React.FC<EditModalProps> = ({
                             }}
                             onKeyPress={handleKeyPress}
                             className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="correo@ejemplo.com"
+                            placeholder={addParticipantPlaceholder}
                         />
                         <button
                             type="button"
                             onClick={handleAddEmail}
                             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                         >
-                            Añadir
+                            {addParticipantButton}
                         </button>
                     </div>
                     {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
@@ -198,7 +211,9 @@ export const EditModal: React.FC<EditModalProps> = ({
                     {/* Lista de emails por añadir */}
                     {emailList.length > 0 && (
                         <div className="mt-3">
-                            <h4 className="text-sm font-medium text-gray-700 mb-2">Participantes por añadir:</h4>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">
+                                {addParticipantLabel}
+                            </h4>
                             <div className="space-y-2">
                                 {emailList.map((email, index) => (
                                     <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
@@ -221,7 +236,9 @@ export const EditModal: React.FC<EditModalProps> = ({
 
                 {/* Participantes actuales */}
                 <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">Participantes actuales</h3>
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">
+                        {sharedParticipantsLabel}
+                    </h3>
                     <div className="bg-gray-50 rounded-md p-3">
                         {diagram.sharedUsers && diagram.sharedUsers.length > 0 ? (
                             <ul className="space-y-2">
@@ -250,7 +267,9 @@ export const EditModal: React.FC<EditModalProps> = ({
                                 ))}
                             </ul>
                         ) : (
-                            <p className="text-sm text-gray-500">No hay participantes compartidos</p>
+                            <p className="text-sm text-gray-500">
+                                {sharedParticipantsDescription}
+                            </p>
                         )}
                     </div>
                 </div>

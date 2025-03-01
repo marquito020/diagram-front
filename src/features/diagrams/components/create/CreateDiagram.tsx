@@ -7,12 +7,19 @@ import { Toast } from "../../../../app/components/Toast";
 import Loading from "../../../../app/components/Loading";
 import Modal from "../../../../app/components/Modal";
 import { DiagramMessages, DiagramToastTypes, INITIAL_TOAST_STATE, ToastState } from "../../../../app/constants/diagramMessages";
+import { ModalConstants, ModalTitles, ModalDescriptions, ModalIcons, ModalButtons, ModalPlaceholders } from '../../../../app/constants/modals';
 
 export default function CreateDiagram() {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateDiagramFormData>();
     const { createDiagram, loading } = useDiagramFetch();
     const [isModalOpen, setModalOpen] = useState(false);
     const [toast, setToast] = useState<ToastState>(INITIAL_TOAST_STATE);
+
+    const title = ModalTitles[ModalConstants.CREATE_DIAGRAM];
+    const description = ModalDescriptions[ModalConstants.CREATE_DIAGRAM];
+    const button = ModalButtons[ModalConstants.CREATE_DIAGRAM];
+    const icon = ModalIcons[ModalConstants.CREATE_DIAGRAM];
+    const placeholder = ModalPlaceholders[ModalConstants.CREATE_DIAGRAM];
 
     const onSubmit: SubmitHandler<CreateDiagramFormData> = async (data) => {
         try {
@@ -53,7 +60,9 @@ export default function CreateDiagram() {
     // Icono para el modal
     const modalIcon = (
         <svg className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            {icon === 'plus' && (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            )}
         </svg>
     );
 
@@ -66,7 +75,7 @@ export default function CreateDiagram() {
                 disabled={loading}
                 className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-purple-600 text-base font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3 sm:w-auto sm:text-sm"
             >
-                {loading ? <Loading /> : "Crear"}
+                {loading ? <Loading /> : button}
             </button>
             <button
                 type="button"
@@ -86,18 +95,15 @@ export default function CreateDiagram() {
             >
                 <span className="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
                 <span className="relative flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Crear Diagrama
+                    {button}
                 </span>
             </button>
 
             <Modal
                 isOpen={isModalOpen}
                 onClose={closeModal}
-                title="Crear nuevo diagrama"
-                description="Ingresa un nombre para tu nuevo diagrama. Podrás editarlo y compartirlo más tarde."
+                title={title}
+                description={description}
                 icon={modalIcon}
                 footer={modalFooter}
             >
@@ -115,7 +121,7 @@ export default function CreateDiagram() {
                                 }
                             })}
                             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            placeholder="Mi Diagrama"
+                            placeholder={placeholder}
                         />
                         {errors.name && (
                             <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>

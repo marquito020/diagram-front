@@ -5,6 +5,7 @@ export enum ModalConstants {
     SHARE_DIAGRAM = 'share-diagram',
     ADD_PARTICIPANT = 'add-participant',
     DELETE_PARTICIPANT = 'delete-participant',
+    DELETE_DIAGRAM_2 = 'delete-diagram-2',
 }
 
 export const ModalIcons = {
@@ -35,6 +36,7 @@ export const ModalDescriptions = {
     [ModalConstants.EDIT_DIAGRAM]: 'Edita el nombre del diagrama y añade nuevos participantes.',
     [ModalConstants.CREATE_DIAGRAM]: 'Crea un nuevo diagrama. Podrás editarlo y compartirlo más tarde.',
     [ModalConstants.DELETE_DIAGRAM]: '¿Estás seguro de querer eliminar este diagrama?',
+    [ModalConstants.DELETE_DIAGRAM_2]: 'Esta acción no se puede deshacer.',
     [ModalConstants.SHARE_DIAGRAM]: 'Comparte el diagrama con otros usuarios.',
     [ModalConstants.ADD_PARTICIPANT]: 'Ingresa el correo electrónico del participante que deseas añadir.',
 }

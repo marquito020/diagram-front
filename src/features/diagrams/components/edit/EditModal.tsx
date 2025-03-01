@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DiagramData } from '../../types/diagramTypes';
 import Modal from '../../../../app/components/Modal';
+import { ModalConstants, ModalTitles, ModalDescriptions, ModalIcons, ModalButtons } from '../../../../app/constants/modals';
 
 interface EditModalProps {
     isOpen: boolean;
@@ -24,6 +25,10 @@ export const EditModal: React.FC<EditModalProps> = ({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isRemovingParticipant, setIsRemovingParticipant] = useState(false);
 
+    const title = ModalTitles[ModalConstants.EDIT_DIAGRAM];
+    const description = ModalDescriptions[ModalConstants.EDIT_DIAGRAM];
+    const button = ModalButtons[ModalConstants.EDIT_DIAGRAM];
+
     useEffect(() => {
         if (diagram) {
             setName(diagram.name);
@@ -32,6 +37,15 @@ export const EditModal: React.FC<EditModalProps> = ({
             setError(null);
         }
     }, [diagram]);
+
+    // Renderizar el icono basado en la constante
+    const modalIcon = (
+        <svg className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            {ModalIcons[ModalConstants.EDIT_DIAGRAM] === 'pencil-alt' && (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            )}
+        </svg>
+    );
 
     if (!isOpen || !diagram) return null;
 
@@ -71,9 +85,8 @@ export const EditModal: React.FC<EditModalProps> = ({
     };
 
     const handleRemoveParticipant = async (userId: string) => {
-        console.log('handleRemoveParticipant', userId);
         if (!diagram) return;
-        
+
         setIsRemovingParticipant(true);
         try {
             await onRemoveParticipant(userId);
@@ -98,6 +111,26 @@ export const EditModal: React.FC<EditModalProps> = ({
         }
     };
 
+    const modalFooter = (
+        <div className="flex justify-end space-x-3">
+            <button
+                type="button"
+                onClick={onClose}
+                className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:text-sm"
+            >
+                Cancelar
+            </button>
+            <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm disabled:bg-blue-400"
+            >
+                {isSubmitting ? 'Guardando...' : button}
+            </button>
+        </div>
+    );
+
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -109,26 +142,10 @@ export const EditModal: React.FC<EditModalProps> = ({
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title="Editar Diagrama"
-            footer={
-                <div className="flex justify-end space-x-3">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:text-sm"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                        className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm disabled:bg-blue-400"
-                    >
-                        {isSubmitting ? 'Guardando...' : 'Guardar'}
-                    </button>
-                </div>
-            }
+            title={title}
+            description={description}
+            icon={modalIcon}
+            footer={modalFooter}
         >
             <div className="space-y-6">
                 {/* Nombre del diagrama */}

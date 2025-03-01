@@ -61,6 +61,28 @@ export const ModalSharedParticipantsDescription = {
     [ModalConstants.EDIT_DIAGRAM]: 'No hay participantes compartidos',
 }
 
+// required: "El nombre es requerido",
+
+export const ModalRequired = {
+    [ModalConstants.CREATE_DIAGRAM]: 'El nombre es requerido',
+    [ModalConstants.EDIT_DIAGRAM]: 'El nombre es requerido',
+    [ModalConstants.ADD_PARTICIPANT]: 'El correo electrónico es requerido',
+}
+
+export const ModalMinLength = {
+    [ModalConstants.CREATE_DIAGRAM]: 3,
+    [ModalConstants.EDIT_DIAGRAM]: 3,
+    [ModalConstants.ADD_PARTICIPANT]: 3,
+}
+
+export const ModalMinLengthMessage = {
+    [ModalConstants.CREATE_DIAGRAM]: 'El nombre debe tener al menos 3 caracteres',
+    [ModalConstants.EDIT_DIAGRAM]: 'El nombre debe tener al menos 3 caracteres',
+    [ModalConstants.ADD_PARTICIPANT]: 'El correo electrónico debe tener al menos 3 caracteres',
+}
+
+
+
 
 
 

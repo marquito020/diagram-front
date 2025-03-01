@@ -7,7 +7,7 @@ import { Toast } from "../../../../app/components/Toast";
 import Loading from "../../../../app/components/Loading";
 import Modal from "../../../../app/components/Modal";
 import { DiagramMessages, DiagramToastTypes, INITIAL_TOAST_STATE, ToastState } from "../../../../app/constants/diagramMessages";
-import { ModalConstants, ModalTitles, ModalDescriptions, ModalIcons, ModalButtons, ModalPlaceholders } from '../../../../app/constants/modals';
+import { ModalConstants, ModalTitles, ModalDescriptions, ModalIcons, ModalButtons, ModalPlaceholders, ModalLabels, ModalRequired, ModalMinLengthMessage, ModalMinLength } from '../../../../app/constants/modals';
 
 export default function CreateDiagram() {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateDiagramFormData>();
@@ -20,6 +20,11 @@ export default function CreateDiagram() {
     const button = ModalButtons[ModalConstants.CREATE_DIAGRAM];
     const icon = ModalIcons[ModalConstants.CREATE_DIAGRAM];
     const placeholder = ModalPlaceholders[ModalConstants.CREATE_DIAGRAM];
+    const label = ModalLabels[ModalConstants.CREATE_DIAGRAM];
+    const required = ModalRequired[ModalConstants.CREATE_DIAGRAM];
+    const minLength = ModalMinLength[ModalConstants.CREATE_DIAGRAM];
+    const minLengthMessage = ModalMinLengthMessage[ModalConstants.CREATE_DIAGRAM];
+
 
     const onSubmit: SubmitHandler<CreateDiagramFormData> = async (data) => {
         try {
@@ -110,16 +115,18 @@ export default function CreateDiagram() {
                 <form id="create-diagram-form" onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Nombre del diagrama
+                            {label}
                         </label>
                         <input
                             {...register("name", {
-                                required: "El nombre es requerido",
+                                required: required,
                                 minLength: {
-                                    value: 3,
-                                    message: "El nombre debe tener al menos 3 caracteres"
+                                    value: minLength,
+                                    message: minLengthMessage
                                 }
                             })}
+                            id="name"
+                            type="text"
                             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                             placeholder={placeholder}
                         />

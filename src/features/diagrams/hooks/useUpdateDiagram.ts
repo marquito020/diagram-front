@@ -17,16 +17,18 @@ interface UseUpdateDiagramProps {
 }
 
 export const useUpdateDiagram = ({ onSuccess, onError }: UseUpdateDiagramProps) => {
-    const { updateDiagramName } = useDiagramFetch();
+    const { updateDiagramName, addParticipantToDiagram, removeParticipantFromDiagram } = useDiagramFetch();
 
     const [updateModal, setUpdateModal] = useState<{
         isOpen: boolean;
         diagram: DiagramData | null;
-        handleConfirm: (newName: string) => void;
+        handleConfirm: (newName: string, participantEmail: string[]) => void;
+        handleRemoveParticipant: (userId: string) => Promise<void>;
     }>({
         isOpen: false,
         diagram: null,
-        handleConfirm: () => { }
+        handleConfirm: () => { },
+        handleRemoveParticipant: () => Promise.resolve()
     });
 
     const closeUpdateModal = useCallback(() => {
@@ -40,9 +42,19 @@ export const useUpdateDiagram = ({ onSuccess, onError }: UseUpdateDiagramProps) 
         setUpdateModal({
             isOpen: true,
             diagram,
-            handleConfirm: async (newName: string) => {
+            handleConfirm: async (newName: string, participantEmail: string[]) => {
                 try {
                     await updateDiagramName(diagram._id, newName);
+                    await addParticipantToDiagram(diagram._id, participantEmail);
+                    closeUpdateModal();
+                    onSuccess();
+                } catch (error) {
+                    onError();
+                }
+                },
+            handleRemoveParticipant: async (userId: string) => {
+                try {
+                    await removeParticipantFromDiagram(diagram._id, userId);
                     closeUpdateModal();
                     onSuccess();
                 } catch (error) {
@@ -50,7 +62,7 @@ export const useUpdateDiagram = ({ onSuccess, onError }: UseUpdateDiagramProps) 
                 }
             }
         });
-    }, [updateDiagramName, onSuccess, onError, closeUpdateModal]);
+    }, [updateDiagramName, addParticipantToDiagram, onSuccess, onError, closeUpdateModal]);
 
     return { handleUpdate, updateModal, closeUpdateModal };
 };

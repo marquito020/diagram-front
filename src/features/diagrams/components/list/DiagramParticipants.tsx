@@ -12,9 +12,9 @@ export default function DiagramParticipants({ participants, maxDisplay = 3 }: Pr
     return (
         <div className="flex items-center">
             <div className="flex -space-x-2">
-                {displayParticipants.map(participant => (
+                {displayParticipants.map((participant, index) => (
                     <div
-                        key={participant._id}
+                        key={participant._id || `participant-${participant.email}-${index}`}
                         className="relative"
                         title={`${participant.firstName} ${participant.lastName}`}
                     >
@@ -25,7 +25,10 @@ export default function DiagramParticipants({ participants, maxDisplay = 3 }: Pr
                     </div>
                 ))}
                 {remainingCount > 0 && (
-                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-sm border-2 border-white">
+                    <div
+                        key="remaining-count"
+                        className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-sm border-2 border-white"
+                    >
                         +{remainingCount}
                     </div>
                 )}

@@ -117,6 +117,7 @@ const ListDiagrams = () => {
             diagram={updateModal.diagram}
             onClose={closeUpdateModal}
             onUpdate={updateModal.handleConfirm}
+            onRemoveParticipant={updateModal.handleRemoveParticipant}
         />
     ), [updateModal, closeUpdateModal]);
 

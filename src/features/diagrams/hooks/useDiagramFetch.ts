@@ -33,7 +33,7 @@ interface UseDiagramFetchResult {
     /** Función para recargar la lista de diagramas */
     refreshDiagrams: () => Promise<DiagramData[]>;
     /** Función para agregar un participante a un diagrama por correo electrónico */
-    addParticipantToDiagram: (diagramId: string, participantEmail: string) => Promise<DiagramData>;
+    addParticipantToDiagram: (diagramId: string, participantEmail: string[]) => Promise<DiagramData>;
     /** Función para actualizar el nombre de un diagrama */
     updateDiagramName: (diagramId: string, newName: string) => Promise<DiagramData>;
     /** Función para eliminar un participante de un diagrama */
@@ -175,7 +175,7 @@ export const useDiagramFetch = (): UseDiagramFetchResult => {
      * @param {string} participantEmail Correo electrónico del participante a agregar
      * @returns {Promise<DiagramData>} Datos del diagrama actualizado
      */
-    const addParticipantToDiagram = useCallback(async (diagramId: string, participantEmail: string): Promise<DiagramData> => {
+    const addParticipantToDiagram = useCallback(async (diagramId: string, participantEmail: string[]): Promise<DiagramData> => {
         if (!userRef.current?._id) {
             throw new Error("No hay un usuario autenticado");
         }
@@ -242,6 +242,8 @@ export const useDiagramFetch = (): UseDiagramFetchResult => {
      * @returns {Promise<DiagramData>} Datos del diagrama actualizado
      */
     const removeParticipantFromDiagram = useCallback(async (diagramId: string, participantId: string): Promise<DiagramData> => {
+        // console.log('removeParticipantFromDiagram', diagramId);
+        // console.log('participantId', participantId);
         if (!userRef.current?._id) {
             throw new Error("No hay un usuario autenticado");
         }

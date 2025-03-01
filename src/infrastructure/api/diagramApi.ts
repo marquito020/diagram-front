@@ -71,7 +71,7 @@ export class DiagramService {
     }
 
     // add participant to diagram by email
-    async addParticipantToDiagram(diagramId: string, participantEmail: string): Promise<Diagram> {
+    async addParticipantToDiagram(diagramId: string, participantEmail: string[]): Promise<Diagram> {
         if (!diagramId || !participantEmail) {
             throw new Error('Se requieren ID de diagrama y correo electrónico del participante');
         }
@@ -79,7 +79,7 @@ export class DiagramService {
         try {
             const response = await axiosClient.post<ApiResponseVariant<Diagram>>(
                 `${this.DIAGRAM_ENDPOINT}/${diagramId}/shared-user-by-email`,
-                { email: participantEmail }
+                { emails: participantEmail }
             );
 
             return this.extractData(response);
@@ -91,6 +91,8 @@ export class DiagramService {
 
     // Eliminar participante de un diagrama
     async removeParticipantFromDiagram(diagramId: string, participantId: string): Promise<Diagram> {
+        // console.log('removeParticipantFromDiagram', diagramId);
+        // console.log('participantId', participantId);
         if (!diagramId || !participantId) {
             throw new Error('Se requieren ID de diagrama y ID del participante');
         }

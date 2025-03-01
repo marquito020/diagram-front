@@ -96,13 +96,6 @@ const Modal: React.FC<ModalProps> = ({
         }
     };
 
-    // Aplicar la clase de color al icono
-    const iconWithColor = icon && React.isValidElement(icon)
-        ? React.cloneElement(icon as React.ReactElement, {
-            className: `${(icon as React.ReactElement).props.className || ''} ${variantClasses[variant].iconColor}`.trim()
-        })
-        : icon;
-
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto">
             <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -124,8 +117,8 @@ const Modal: React.FC<ModalProps> = ({
                         <div className={`bg-white ${paddingClasses[padding].header}`}>
                             <div className="sm:flex sm:items-start">
                                 {icon && (
-                                    <div className={`mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full ${variantClasses[variant].iconBg} sm:mx-0 sm:h-10 sm:w-10`}>
-                                        {iconWithColor}
+                                    <div className={`mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full ${variantClasses[variant].iconBg} sm:mx-0 sm:h-10 sm:w-10 ${variantClasses[variant].iconColor}`}>
+                                        {icon}
                                     </div>
                                 )}
                                 <div className={`${icon ? 'mt-3 sm:mt-0 sm:ml-4' : ''} text-center sm:text-left flex-grow`}>
@@ -176,4 +169,4 @@ const Modal: React.FC<ModalProps> = ({
     );
 };
 
-export default Modal; 
+export default Modal;

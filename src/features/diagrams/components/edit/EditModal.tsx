@@ -24,7 +24,11 @@ export const EditModal: React.FC<EditModalProps> = ({
     onRemoveParticipant
 }) => {
     // React Hook Form para manejar el formulario
-    const { register, handleSubmit, setValue, formState: { errors }, reset } = useForm<EditDiagramFormData>();
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<EditDiagramFormData>({
+        defaultValues: {
+            name: ''
+        }
+    });
 
     const [emailInput, setEmailInput] = useState('');
     const [emailList, setEmailList] = useState<string[]>([]);
@@ -49,15 +53,16 @@ export const EditModal: React.FC<EditModalProps> = ({
     const minLength = ModalMinLength[ModalConstants.EDIT_DIAGRAM];
     const minLengthMessage = ModalMinLengthMessage[ModalConstants.EDIT_DIAGRAM];
 
-    // Inicializar el formulario cuando cambia el diagrama
+    // Inicializar el formulario cuando cambia el diagrama o cuando se abre el modal
     useEffect(() => {
-        if (diagram) {
-            setValue('name', diagram.name);
+        if (isOpen && diagram) {
+            // Reiniciar el formulario con los valores del diagrama actual
+            reset({ name: diagram.name });
             setEmailList([]);
             setEmailInput('');
             setError(null);
         }
-    }, [diagram, setValue]);
+    }, [isOpen, diagram, reset]);
 
     // Renderizar el icono basado en la constante
     const modalIcon = (
